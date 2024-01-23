@@ -25,6 +25,7 @@ services:
       - ./backend:/app
     depends_on:
       - db
+    restart: always
     networks:
       - timesheet
 
