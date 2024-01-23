@@ -1,46 +1,45 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String, DateTime, Date, Time
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, String, DateTime, Column
 
 db = SQLAlchemy()
 
 class Image(db.Model):
-    id : Mapped[int] = mapped_column(primary_key = True)
-    date: Mapped[Date]
-    imglink: Mapped[str] = mapped_column(unique=True, nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(default=datetime.utcnow)
+    id = Column(Integer, primary_key=True)
+    date = Column(DateTime)
+    imglink = Column(String(500), unique=True, nullable=False)
+    created_at = Column(DateTime, default = datetime.utcnow)
     
 class Manager(db.Model):
-    id : Mapped[int] = mapped_column(primary_key = True)
-    name: Mapped[str] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default = datetime.utcnow)
 
 
 class Employee(db.Model):
-    id : Mapped[int] = mapped_column(primary_key = True)
-    name: Mapped[str] = mapped_column(nullable=False)
-    managerId: Mapped[int] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    managerId = Column(Integer,nullable=False)
+    created_at = Column(DateTime, default = datetime.utcnow)
 
 class Timesheet(db.Model):
-    id : Mapped[int] = mapped_column(primary_key = True)
-    employeeId: Mapped[int] = mapped_column(nullable=False)
-    date: Mapped[datetime.date] = mapped_column(nullable=False)
-    timeIn1: Mapped[datetime.time]
-    timeOut1: Mapped[datetime.time]
-    timeIn2: Mapped[datetime.time]
-    timeOut2: Mapped[datetime.time]
-    perPayHour: Mapped[int] = mapped_column(nullable=False)
-    overTimePay: Mapped[int] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(Integer, primary_key=True)
+    employeeId = Column(Integer,nullable=False)
+    date = Column(DateTime)
+    timeIn1 = Column(DateTime)
+    timeOut1 = Column(DateTime)
+    timeIn2 = Column(DateTime)
+    timeOut2 = Column(DateTime)
+    perPayHour = Column(Integer, nullable=False)
+    overTimePay = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default = datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Pay(db.Model):
-    id : Mapped[int] = mapped_column(primary_key = True)
-    date: Mapped[datetime.date] = mapped_column(nullable=False)
-    employeeId: Mapped[int] = mapped_column(nullable=False)
-    totalHour: Mapped[int] = mapped_column(nullable=False)
-    totalPay: Mapped[int] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(Integer, primary_key=True)
+    date = Column(DateTime)
+    employeeId = Column(Integer,nullable=False)
+    totalHour = Column(Integer, nullable=False)
+    totalPay= Column(Integer, nullable=False)
+    created_at = Column(DateTime, default = datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
