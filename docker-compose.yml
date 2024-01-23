@@ -1,0 +1,44 @@
+version: "3"
+services:
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend:/app
+  #   command: sh -c "npm install && npm start"
+  #   depends_on:
+  #     - db
+  #     - backend
+  #   networks:
+  #     - timesheet
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - timesheet
+
+  # MySQL 데이터베이스 서비스
+  db:
+    image: mysql:latest
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    networks:
+      - timesheet
+
+networks:
+  timesheet:
+    driver: bridge
