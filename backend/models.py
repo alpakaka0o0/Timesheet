@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String, DateTime, Column
+from sqlalchemy import Integer, String, DateTime, Column, ForeignKey, Boolean
 
 db = SQLAlchemy()
 
@@ -10,36 +10,38 @@ class Image(db.Model):
     imglink = Column(String(500), unique=True, nullable=False)
     created_at = Column(DateTime, default = datetime.utcnow)
     
-class Manager(db.Model):
-    id = Column(Integer, primary_key=True)
-    name = Column(String(255), nullable=False)
-    created_at = Column(DateTime, default = datetime.utcnow)
-
-
 class Employee(db.Model):
     id = Column(Integer, primary_key=True)
-    name = Column(String(255), nullable=False)
-    managerId = Column(Integer,nullable=False)
+    employee_id = Column(String(12), nullable=False)
+    first_name = Column(String(255), nullable=False)
+    pay_per_hour = Column(Integer, nullable=False)
+    over_time_pay = Column(Integer)
     created_at = Column(DateTime, default = datetime.utcnow)
 
 class Timesheet(db.Model):
     id = Column(Integer, primary_key=True)
-    employeeId = Column(Integer,nullable=False)
-    date = Column(DateTime)
-    timeIn1 = Column(DateTime)
-    timeOut1 = Column(DateTime)
-    timeIn2 = Column(DateTime)
-    timeOut2 = Column(DateTime)
-    perPayHour = Column(Integer, nullable=False)
-    overTimePay = Column(Integer, nullable=False)
+    employee_id = Column(String(12), ForeignKey(Employee.employee_id),nullable=False)
+    week_starting_date = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default = datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class Timecheck(db.Model):
+    id = Column(Integer, primary_key=True)
+    timesheet_id = Column(Integer, ForeignKey(Timesheet.id),nullable=False)
+    date = Column(DateTime)
+    in_time = Column(DateTime)
+    out_time = Column(DateTime)
+    late_entry = Column(Boolean, nullable=False)
+    early_exit = Column(Boolean, nullable=False)
+    created_at = Column(DateTime, default = datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 
 class Pay(db.Model):
     id = Column(Integer, primary_key=True)
     date = Column(DateTime)
-    employeeId = Column(Integer,nullable=False)
-    totalHour = Column(Integer, nullable=False)
-    totalPay= Column(Integer, nullable=False)
+    employee_id = Column(String(12), ForeignKey(Employee.employee_id),nullable=False)
+    total_hour = Column(Integer, nullable=False)
+    total_pay= Column(Integer, nullable=False)
     created_at = Column(DateTime, default = datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

@@ -1,16 +1,11 @@
 from flask import Flask
-from models import db, Manager, Employee, Pay, Timesheet, Image
+from models import db, Employee, Pay, Timesheet, Image, Timecheck
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 db.init_app(app)
 with app.app_context():
     db.create_all()
-
-# app.config.from_pyfile("config.py")
-
-# from models import db
-# db.init_app(app)
 
 @app.route('/')
 def users():

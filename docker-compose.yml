@@ -1,19 +1,20 @@
 version: "3"
 services:
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./frontend:/app
-  #   command: sh -c "npm install && npm start"
-  #   depends_on:
-  #     - db
-  #     - backend
-  #   networks:
-  #     - timesheet
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm install && npm start"
+    depends_on:
+      - db
+      - backend
+    restart: always
+    networks:
+      - timesheet
 
   backend:
     build:
