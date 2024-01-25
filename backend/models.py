@@ -12,15 +12,15 @@ class Image(db.Model):
     
 class Employee(db.Model):
     id = Column(Integer, primary_key=True)
-    employee_id = Column(String(12), nullable=False)
+    employee_id = Column(String(255), unique=True, nullable=False) 
     first_name = Column(String(255), nullable=False)
     pay_per_hour = Column(Integer, nullable=False)
     over_time_pay = Column(Integer)
-    created_at = Column(DateTime, default = datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 class Timesheet(db.Model):
     id = Column(Integer, primary_key=True)
-    employee_id = Column(String(12), ForeignKey(Employee.employee_id),nullable=False)
+    employee_id = Column(String(255), ForeignKey(Employee.employee_id),nullable=False)
     week_starting_date = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default = datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -40,7 +40,7 @@ class Timecheck(db.Model):
 class Pay(db.Model):
     id = Column(Integer, primary_key=True)
     date = Column(DateTime)
-    employee_id = Column(String(12), ForeignKey(Employee.employee_id),nullable=False)
+    employee_id = Column(String(255), ForeignKey(Employee.employee_id),nullable=False)
     total_hour = Column(Integer, nullable=False)
     total_pay= Column(Integer, nullable=False)
     created_at = Column(DateTime, default = datetime.utcnow)
