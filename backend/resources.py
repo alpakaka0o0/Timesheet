@@ -3,6 +3,8 @@ from flask import Flask, jsonify, request
 import sys
 from models import db, Employee, Timesheet, Timecheck
 from datetime import datetime
+from flask import Response
+import json
 
 payroll_ns = Namespace('payroll', description='Payroll Overview Page API 목록')
     
@@ -83,13 +85,18 @@ class ModiAPI(Resource):
     @modi_ns.doc('save_timesheet_edit')
     def post(self):
         json_data = request.get_json()
+        print('Json data: ', json_data)
         employee_name = json_data['name']
+        print('employee name: ', employee_name)
 
         # Employee 검색
         employee = Employee.query.filter_by(first_name=employee_name).first()
         if not employee:
+            print('!!!!No name!!!!')
             return jsonify({"message": "Employee not found"}), 404
-
+        else: 
+            print("!!!!yes name")
+            
         # Timesheet 생성 및 저장
         timesheet = Timesheet(
             employee_id=employee.id,
@@ -100,16 +107,18 @@ class ModiAPI(Resource):
             updated_at=datetime.utcnow()
         )
         db.session.add(timesheet)
-        db.session.commit()
+        db.session.commit()  # Timesheet 커밋
 
         # Timecheck 생성 및 저장
         for entry in json_data['data']:
             date = datetime.strptime(entry['date'], '%m/%d/%Y')
+            in_time = datetime.strptime(entry['timeIn'], '%H:%M').time()
+            out_time = datetime.strptime(entry['timeOut'], '%H:%M').time()
             timecheck = Timecheck(
                 timesheet_id=timesheet.id,
-                date=date,
-                in_time=datetime.combine(date, datetime.strptime(entry['timeIn'], '%H:%M').time()),
-                out_time=datetime.combine(date, datetime.strptime(entry['timeOut'], '%H:%M').time()),
+                date=datetime.combine(date, datetime.min.time()),
+                in_time=datetime.combine(date, in_time),
+                out_time=datetime.combine(date, out_time),
                 late_entry=False,
                 early_exit=False,
                 created_at=datetime.utcnow(),
@@ -118,6 +127,13 @@ class ModiAPI(Resource):
             db.session.add(timecheck)
 
         db.session.commit()
-        return jsonify({"message": "Timesheet data saved successfully"}), 200
-
-    	
+        # 응답 객체 생성
+        response_data = {"message": "Timesheet data saved successfully"}
+        print("Response data:", response_data)  # 콘솔에 출력하여 확인
+        return Response(
+            response=json.dumps(response_data),
+            status=200,
+            mimetype='application/json'
+        )
+        #return jsonify({"message": "Timesheet data saved successfully"}), 200
+            
