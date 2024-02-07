@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String, DateTime, Column, ForeignKey, Boolean, Time, Float
+from sqlalchemy import Integer, String, DateTime, Column, ForeignKey, Boolean, Float
 
 
 db = SQLAlchemy()
@@ -41,7 +41,7 @@ class Timecheck(db.Model):
 class Pay(db.Model):
     id = Column(Integer, primary_key=True)
     date = Column(String(7))
-    employee_id = Column(Integer, ForeignKey('employee.id'), nullable=False)
+    employee_id = Column(String(255), ForeignKey('employee.employee_id'), nullable=False)
     total_hour = Column(Float, nullable=False)
     total_pay= Column(Float, nullable=False)
     created_at = Column(DateTime, default = datetime.utcnow)
