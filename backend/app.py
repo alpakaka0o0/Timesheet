@@ -1,10 +1,13 @@
-from flask import Flask
+from flask import Flask, jsonify, request, send_file
 from models import db, Employee, Pay, Timesheet, Image, Timecheck
 from resources import payroll_ns, upload_ns, modi_ns
 from flask_restx import Api, Resource, Namespace
 from flask_cors import CORS
+import os
+
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 CORS(app)
 app.config.from_pyfile('config.py')
 db.init_app(app)
@@ -24,7 +27,5 @@ def users():
                         {"id" : 2, "name" : "jerry"}]}
 
 
- 
-if __name__ == "__main__":
-    app.run(debug = True)
-
+if __name__ == '__main__':
+    app.run(debug=True)
