@@ -1,10 +1,14 @@
 from flask_restx import Resource, Namespace
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, current_app
 import sys
 from models import db, Employee, Timesheet, Timecheck
 from datetime import datetime
 from flask import Response
 import json
+from ocr_final import extract_text
+from werkzeug.utils import secure_filename
+import os
+from flask_cors import cross_origin
 
 payroll_ns = Namespace('payroll', description='Payroll Overview Page API 목록')
     
@@ -60,11 +64,40 @@ class PayrollInfoAPI(Resource):
 upload_ns = Namespace('upload', description='Upload Image Pgae API 목록')
 
 #타임시트지 이미지 전송
-@upload_ns.route('/timesheet-image')
-class TimesheetImageAPI(Resource):
-    @payroll_ns.doc('get_payroll_info')
+@upload_ns.route('/upload_img')
+class UploadImageAPI(Resource):
+    @cross_origin()
     def post(self):
-    	return {"hello" : "restx"}
+        if 'img_file' not in request.files:
+            return {"error": "No file part"}, 400
+
+        file = request.files['img_file']
+        if file.filename == '':
+            return {"error": "No selected file"}, 400
+
+        # 파일 저장
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        # OCR 처리
+        try:
+            employee_name, manager_name, weekStart, header, data, employeeSign, managerSign = extract_text(filepath)
+            # 처리 결과를 바탕으로 응답 데이터 생성
+            response_data = {
+                "employee_name": employee_name,
+                "manager_name": manager_name,
+                "weekStart": weekStart,
+                "header": header,
+                "data": data,
+                "employeeSign": employeeSign,
+                "managerSign": managerSign
+            }
+            print("확인:", response_data)
+            return jsonify(response_data), 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+
     
  
 #3. modifyInfo page
