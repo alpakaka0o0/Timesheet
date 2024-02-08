@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_restx import Api, Resource
 from flask_migrate import Migrate
 from sqlalchemy import text
@@ -7,9 +7,16 @@ from models import db, Employee, Pay, Timesheet, Image, Timecheck
 from resources import payroll_ns, upload_ns, modi_ns
 from flask_restx import Api, Resource, Namespace
 from flask_cors import CORS
+<<<<<<< HEAD
 from datetime import datetime
+=======
+import os
+
+import requests
+>>>>>>> Jiwon_branch
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 CORS(app)
 app.config.from_pyfile('config.py')
 db.init_app(app)
@@ -45,12 +52,15 @@ def get_employee_list():
     }
     url = f'{base_url}/api/resource/Employee' 
     response = requests.get(url, headers=headers)
+    print("response: ", response.json())
     get_data = response.json()["data"]
-    db.session.query(Employee).delete()
     db.session.commit()
     
     for i in range(len(get_data)): # get employee's erpNext Id
         url = f'{base_url}/api/resource/Employee/{get_data[i]["name"]}' 
+        get_employee = Employee.query.filter_by(employee_id=get_data[i]["name"]).first()
+        if get_employee:
+            continue
         response = requests.get(url, headers=headers)
         employee_info = response.json()["data"]
         db.session.add(Employee(employee_id = employee_info["employee"], first_name = employee_info["first_name"]))
@@ -60,6 +70,7 @@ def get_employee_list():
         return response.json()
     else:
         return None
+<<<<<<< HEAD
 
 
 @app.route('/api/pay', methods=['GET'])
@@ -90,7 +101,9 @@ def get_pay():
         print(row)
 
     return "great"
+=======
+>>>>>>> Jiwon_branch
  
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug = True)
 
