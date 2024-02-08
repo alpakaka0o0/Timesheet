@@ -122,6 +122,7 @@ class ModiAPI(Resource):
     @modi_ns.doc('save_timesheet_edit')
     def post(self):
         json_data = request.get_json()
+
         print('Json data: ', json_data)
         employee_name = json_data['name']
         print('employee name: ', employee_name)
@@ -134,9 +135,10 @@ class ModiAPI(Resource):
         else: 
             print("!!!!yes name")
         # Timesheet 생성 및 저장
+        print("json_data: ", json_data)
         timesheet = Timesheet(
             employee_id=employee.employee_id,
-            week_starting_date=json_data['week_starting_date'],
+            week_starting_date=datetime.strptime(json_data['week_starting_date'], '%m/%d/%Y'),
             pay_per_hour=int(json_data['ratePerHour']),
             over_time_pay=int(json_data['overtimePay']),
             created_at=datetime.utcnow(),
@@ -179,9 +181,9 @@ class ModiAPI(Resource):
                 hourly_pay=timesheet.pay_per_hour, 
                 week_starting_date=timesheet.week_starting_date
                 )
-        print(frappe_response_attendance)
-        print(frappe_response_checkin)
-        print(response_pay, timesheet.week_starting_date, timesheet.pay_per_hour)
+        print("attendance: ", frappe_response_attendance)
+        print("check: ",frappe_response_checkin)
+        print("pay: ", response_pay, timesheet.week_starting_date, timesheet.pay_per_hour)
 
         # 응답 객체 생성
         response_data = {"message": "Timesheet data saved successfully"}
@@ -312,7 +314,7 @@ def payroll(employee_id, timesheet_id, hourly_pay, week_starting_date):
         elif temp_work_hours <= 0:
             row[2] += base_pay * 0.5 * float(row[3])
         weekly_work_hours += float(row[1])
-        get_date = str(row[0].year) +"-" + str(row[0].month) 
+        get_date = str(row[0].year) +"-" + str(row[0].month).zfill(2)
         weekly_work_payment += float(row[2])
 
         get_pay = Pay.query.filter_by(employee_id = employee_id, date = get_date).first()

@@ -27,7 +27,6 @@ client = vision.ImageAnnotatorClient(client_options=client_options)
 path = 'img4.jpg'
 
 def extract_text(path):
-    
     with io.open(path, 'rb') as image_file:
         content = image_file.read()
 
@@ -42,7 +41,7 @@ def extract_text(path):
     # 텍스트 바운딩 박스 좌표 출력
     for i, text in enumerate(texts):
         if (i == 0):
-            continue;
+            continue
 
         vertices = [(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices]
         # 중점 계산

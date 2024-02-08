@@ -7,13 +7,11 @@ from models import db, Employee, Pay, Timesheet, Image, Timecheck
 from resources import payroll_ns, upload_ns, modi_ns
 from flask_restx import Api, Resource, Namespace
 from flask_cors import CORS
-<<<<<<< HEAD
 from datetime import datetime
-=======
+
 import os
 
 import requests
->>>>>>> Jiwon_branch
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
@@ -70,12 +68,11 @@ def get_employee_list():
         return response.json()
     else:
         return None
-<<<<<<< HEAD
+
 
 
 @app.route('/api/pay', methods=['GET'])
 def get_pay():
-    data = request.get_json()
     sql_query = text("""
                 SELECT 
                     p.date, 
@@ -90,7 +87,7 @@ def get_pay():
                     p.date, e.first_name;""")
     result = db.session.execute(sql_query)
     rows = result.fetchall()
-
+    data = []
     for row in rows:
         '''
         row[0] = date
@@ -98,11 +95,15 @@ def get_pay():
         row[2] = total_hour
         row[3] = total_pay
         '''
-        print(row)
-
-    return "great"
-=======
->>>>>>> Jiwon_branch
+        get_row = {
+            "time": row[0],
+            "employee": row[1],
+            "totalHours": int(row[2]),
+            "salary": int(row[3])
+        }
+        data.append(get_row)
+    print(data)
+    return data
  
 if __name__ == '__main__':
     app.run(debug = True)
